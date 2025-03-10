@@ -1,0 +1,57 @@
+#include <stdio.h>
+
+void main(void){
+    printf("%c", 218);
+    int i;
+    for(i=0; i < 51; i++){
+        printf("%c",196);
+    }
+    printf("%c",191);
+    printf("\n");
+    printf("%c",179);
+    for(i=0; i < 51; i++){
+        printf(" ");
+    }
+    printf("%c",179);
+    printf("\n");
+    printf("%c",179);
+    printf("                  ECOP14 - UNIFEI");
+    for(i=0; i < 18; i++){
+        printf(" ");
+    }
+    printf("%c",179);
+    printf("\n");
+    printf("%c",179);
+    for(i=0; i < 51; i++){
+        printf(" ");
+    }
+    printf("%c",179);
+    printf("\n");
+    printf("%c",195);
+    for(i=0; i < 51; i++){
+        printf("%c",196);
+    }
+    printf("%c",180);
+    printf("\n");
+    printf("%c",179);
+    printf(" ASCII ");
+    for(i=0; i < 44; i++){
+        printf(" ");
+    }
+    printf("%c",179);
+    printf("\n");
+    printf("%c",179);
+    printf(" ");
+    for(i=48; i <= 57; i++){
+        printf("%c=%d ",i,i);
+    }
+    printf("%c",179);
+    printf("\n");
+    printf("%c",192);
+    for(i=0; i < 51; i++){
+        printf("%c",196);
+    }
+    printf("%c",217);
+
+
+}
