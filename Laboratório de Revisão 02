@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+//Tipo 1 – ervas daninhas R$50,00 por 1000 m2;
+//Tipo 2 – gafanhotos R$100,00 por 1000 m2;
+//Tipo 3 – broca R$150,00 por 1000 m2;
+//Tipo 4 – todos os tipos R$250,00 por 1000 m2.
+
+int main(){
+
+    int area, tipo;
+    float preco, valor_total;
+    
+    printf("Digite a area a ser pulverizada: ", area);
+    scanf("%d", &area);
+    printf("Digite o tipo de praga (1, 2, 3 ou 4): ", tipo);
+    scanf("%d", &tipo);
+    
+    
+    if (tipo == 1){
+        preco = 50.00;
+        valor_total = preco * area / 1000;
+    }
+    if (tipo == 2){
+        preco = 100.00;
+        valor_total = preco * area / 1000;
+    }
+    if (tipo == 3){
+        preco = 150.00;
+        valor_total = preco * area / 1000;
+    }
+    if (tipo == 4){
+        preco = 250.00;
+        valor_total = preco * area / 1000;
+    }
+
+    
+    if (area > 2000){
+        valor_total = valor_total * 0.95;
+    }
+    if (valor_total > 750){
+        valor_total =  (valor_total - 750) * 0.90;
+        valor_total = valor_total + 750;
+    }
+    
+    
+    printf("O valor é: %2f", valor_total);
+    
+    
+}
