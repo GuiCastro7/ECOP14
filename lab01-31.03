@@ -1,0 +1,50 @@
+main.c
+#include "config.h"
+#include "pic18f4520.h"
+#include "delay.h"
+//inicio do programa
+
+void main(void) {
+    TRISD = 0x00;
+    unsigned char i;
+    while (1){
+        PORTD = 0xFE;
+        for (i = 0; i < 20; i++){ 
+            tempo(250);
+        }
+        PORTD = 0xFD;
+        for (i = 0; i < 2; i++){
+            tempo(250);
+        }
+        PORTD = 0xFB;
+        for (i = 0; i < 16; i++){ 
+            tempo(250);
+        }
+    }
+}
+
+delay.c
+#include "delay.h"
+
+void tempo(unsigned char x){
+ 
+    
+    volatile unsigned char i,j, k;
+    
+    for (i = 0; i < x; i++) {
+        for (j = 0; j < 41; j++) {
+            for (k = 0; k < 3; k++);
+        }                     
+    }
+}
+
+delay.h
+#ifndef DELAY_H
+#define	DELAY_H
+
+void tempo(unsigned char x);
+
+#endif	
+
+
+
