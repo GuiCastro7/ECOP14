@@ -1,0 +1,49 @@
+#main.c# 
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+#include "stdio.h"
+
+//inicio do programa
+
+void main(void) {
+    lcdInit();
+    printf("ECOP14\nIESTI UNIFEI");
+    for(;;);
+   }
+
+
+
+#stdio.h#
+
+#ifndef STDIO_H
+#define STDIO_H
+
+    void printf(char msg[32]);
+
+#endif /* STDIO_H */
+
+
+#stdio.c#
+
+#include "stdio.h"
+#include "lcd.h"
+
+void printf(char msg[32]) {
+    char i;
+    lcdCommand(0x80);
+    for (i = 0; i < 31; i++) {
+        if (msg[i] == '\0') {
+            return;
+        } 
+        else if(msg[i] == '\n'){
+                lcdCommand(0xC0);
+        }
+        else{
+            
+            lcdData(msg[i]);
+        }
+    }
+ }
+    
