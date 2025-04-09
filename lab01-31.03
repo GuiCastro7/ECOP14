@@ -1,7 +1,8 @@
-main.c
+// arquivo main.c
 #include "config.h"
 #include "pic18f4520.h"
 #include "delay.h"
+
 //inicio do programa
 
 void main(void) {
@@ -23,12 +24,11 @@ void main(void) {
     }
 }
 
-delay.c
+
+// arquivo delay.c
 #include "delay.h"
 
-void tempo(unsigned char x){
- 
-    
+void tempo(unsigned char x){    
     volatile unsigned char i,j, k;
     
     for (i = 0; i < x; i++) {
@@ -38,7 +38,8 @@ void tempo(unsigned char x){
     }
 }
 
-delay.h
+
+//arquivo delay.h
 #ifndef DELAY_H
 #define	DELAY_H
 
