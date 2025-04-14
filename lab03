@@ -1,0 +1,60 @@
+//main.c 
+
+#include "config.h"
+#include "led.h"
+//inicio do programa
+
+#define PORTD (*(volatile __near unsigned char*) 0xF83);
+#define TRISD (*(volatile __near unsigned char*) 0xF95); 
+
+void main(void) {
+    char i;
+    float o;
+    ConfigurarLed();
+    for (;;) {
+        
+        for (i= 0; i < 8; i++){
+            LigarLed(i);
+            for(o = 0;o<1000;o++);
+            DesligarLed(i);
+        } 
+    }    
+}
+
+
+//led.c
+
+#include "led.h"
+
+#define PORTD (*(volatile __near unsigned char*) 0xF83)
+#define TRISD (*(volatile __near unsigned char*) 0xF95)
+
+unsigned char num;
+
+void ConfigurarLed(void) {
+    PORTD = 0xFF;
+    TRISD = 0X00;
+
+}
+
+void LigarLed(unsigned char num) {
+    PORTD = PORTD | ~(1 << num);
+
+}
+
+void DesligarLed(unsigned char num) {
+    PORTD = PORTD  & (1<<num);
+}
+
+
+//led.h
+
+#ifndef LED_H
+#define	LED_H
+
+void ConfigurarLed(void);
+void LigarLed(unsigned char num);
+void DesligarLed(unsigned char num);
+
+
+#endif	/* LED_H */
