@@ -1,0 +1,70 @@
+//Parte 2 da aula (ligue led por led em intervalos de 2 segundos. Quando todos os led's estiverem acesos, apagar todos e reiniciar).
+
+#include "pic18f4520.h"
+#include "config.h"
+
+
+void main(void) {
+    char i;
+    float o;
+    
+    //configuração do sistema
+    TRISA = 0x00; //configura porta A como saída
+    TRISD = 0x00; //configura porta D como saída
+    TRISE = 0x00; //configura porta E como saída
+    BitClr(INTCON2, 7); //liga pull up
+    ADCON1 = 0x0E; //config AD
+    BitSet(PORTA, 5); //ativa o 1o display
+    BitSet(PORTA, 2); //ativa o 2o display
+    BitSet(PORTE, 0); //ativa o 3o display
+    BitSet(PORTE, 2); //ativa o 4o display
+    for (;;) {
+        for (i= 0; i <= 8; i++){
+            BitSet(PORTD, i);
+            for(o = 0;o<5000;o++);
+        }
+        PORTD = 0X00;
+    }
+   
+}
+
+//Parte 3 da aula (Faça um programa que teste se a tecla A está apertada (bit 4 da porta B) e mostre a letra A no display).
+
+#include "pic18f4520.h"
+#include "config.h"
+
+
+
+void main(void) {
+    
+    //configuração do sistema
+    TRISA = 0x00; //configura porta A como saída
+    TRISD = 0x00; //configura porta D como saída
+    TRISE = 0x00; //configura porta E como saída
+    BitClr(INTCON2, 7); //liga pull up
+    ADCON1 = 0x0E; //config AD
+    BitSet(PORTA, 5); //ativa o 1o display
+    BitSet(PORTA, 2); //ativa o 2o display
+    BitSet(PORTE, 0); //ativa o 3o display
+    BitSet(PORTE, 2); //ativa o 4o display
+    
+    BitClr(INTCON2, 7); //liga pull up
+    ADCON1 = 0x0E; //config AD
+    TRISB = 0xFE; //config porta para ler teclas A e B
+    PORTB = 0x00; //config porta para ler teclas A e B
+    
+    for (;;) {
+        
+        if(!BitTst(PORTB, 4)) {
+            PORTD = 0X77;
+        } else {
+            PORTD = 0X00;    
+        }
+        if(!BitTst(PORTB, 5)) {
+            PORTD = 0X6F;
+        } else {
+            PORTD = 0X00; 
+        }
+    }
+}
+   
