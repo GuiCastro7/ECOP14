@@ -1,14 +1,16 @@
 //Parte 2 da aula (ligue led por led em intervalos de 2 segundos. Quando todos os led's estiverem acesos, apagar todos e reiniciar).
 
+//Inclui as bibliotecas necessárias
 #include "pic18f4520.h"
 #include "config.h"
 
-
+//Cria uma main usando void pois não queremos que esse codigo retorne ou receba algum valor
 void main(void) {
-    char i;
-    float o;
+    //Variavéis locais -> São declaradas dentro da main e funcionam somente quando a main estiver  em execução
+    char i;// Variavel do tipo char que armazena numeros interos entre -128 a 127 ou se for unsigned char de 0 a 255 
+    float o; //Variavel do tipo float que armazena números com vírgula em um grande intervalo de valores 
     
-    //configuração do sistema
+    //configuração do sistema (Esse código faz com que cada led do display ative progressivamente, de modo a ficar todos os led ativos juntos e o processo reiniciar)
     TRISA = 0x00; //configura porta A como saída
     TRISD = 0x00; //configura porta D como saída
     TRISE = 0x00; //configura porta E como saída
@@ -18,15 +20,17 @@ void main(void) {
     BitSet(PORTA, 2); //ativa o 2o display
     BitSet(PORTE, 0); //ativa o 3o display
     BitSet(PORTE, 2); //ativa o 4o display
+    //Usando o for(,,) ou while(1) criamos um loop infinito
     for (;;) {
+        //Condição imposta sobre o codigo usando o for
         for (i= 0; i <= 8; i++){
             BitSet(PORTD, i);
             for(o = 0;o<5000;o++);
-        }
+        }//Fecha as condições imposta
         PORTD = 0X00;
-    }
-   
-}
+    }//Fecha o loop infinito
+}// Fecha a main. Aqui termina a main e interrompe todas as funções e variaveís criadas dentro da main (caso tenha outras funções fora da main) 
+
 
 //Parte 3 da aula (Faça um programa que teste se a tecla A está apertada (bit 4 da porta B) e mostre a letra A no display).
 
