@@ -1,0 +1,55 @@
+//Codigo da parte 2-a) da aula (Realizar a contagem em segundos de modo que não tenha flicker)
+#include "pic18f4520.h"
+#include "config.h"
+#include "ssd.h"
+
+void main(void) {
+    float tempo, i;
+    int cont = 0;
+    ssdInit();
+    for (;;) {
+        cont++;
+        for (i = 0; i < 30; i++) { // Nesse caso, se o i for menor que x (sendo x algum numero baixo), a contagem irá ficar muito rápida
+        ssdDigit(((cont / 10) % 10), 0); //0.1s
+        ssdDigit(((cont / 100) % 10), 1); //1s
+        ssdDigit(((cont / 1000) % 10), 2); //10s
+        ssdUpdate();
+        for (tempo = 0; tempo < 10; tempo++); // Controle do flicker, se tempo menor que x (sendo "x" alto) tera o flicker
+        }
+    }
+}
+
+
+//Codigo da parte 2-b) da aula (Fizemos um display de relogio, nesse codigo teve o parametro de quando os dois display dos segundos chegarem a 59, a proxima contagem vai zerar os dois e somar +1 no 3 display)
+#include "pic18f4520.h"
+#include "config.h"
+#include "ssd.h"
+
+
+void main(void) {
+    float i;
+    int cont = 0;
+    int min = 0;
+    
+    ssdInit();
+    
+    for (;;){
+        cont++;
+        
+        
+        for (i = 0; i < 60; i++) {  
+            ssdDigit((cont / 10) % 10, 0); //     
+            ssdDigit((cont / 100) % 10, 1); //
+            ssdDigit(min, 2);
+            ssdUpdate();
+        }
+    
+            if(((cont / 600) % 10) != 0){  //Aqui ocorre a contagem dos displays para ao chegarem em 59, o proximo segundo ao inves de fazer 60(6 no 2 e 0 no primeiro), a representação será 00 e logo em seguida somar +1 no terceiro display
+                cont = 0;
+                min++;
+            }
+        
+        for (int i = 0; i < 10; i++) {
+        }   
+    }
+}
