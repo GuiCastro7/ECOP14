@@ -1,0 +1,87 @@
+//Parte 1 da aula (contagem das colunas e linhas)
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+#include "keypad.h"
+
+unsigned char posicao;
+void lcdPosition(unsigned char linha, unsigned char coluna){
+    if (linha == 0){
+        posicao = 0x80 + coluna;      
+    }
+    else{
+        posicao = 0xC0 + coluna;      
+    }
+    lcdCommand(posicao);
+}
+
+void main(void) {
+    unsigned int tecla = 16;
+    unsigned char coluna = 0, linha = 0;
+    lcdInit();
+    kpInit();
+    lcdCommand(0x80);
+    for (;;) {
+        kpDebounce();
+        if (kpRead() != tecla) {
+            tecla = kpRead();
+            if (BitTst(tecla, 2)) linha = 0; //tecla 3
+            if (BitTst(tecla, 3)) linha = 1; //tecla 6
+            if (BitTst(tecla, 1)) coluna++; //tecla B
+            if (BitTst(tecla, 5)) coluna--; //tecla 5
+            lcdPosition(linha,coluna);
+        }
+    }
+}
+
+
+
+//Parte 2 da aula (relogio)
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+#include "keypad.h"
+
+unsigned char posicao;
+
+void lcdPosition(unsigned char linha, unsigned char coluna) {
+    if (linha == 0) {
+        posicao = 0x80 + coluna;
+    } else {
+        posicao = 0xC0 + coluna;
+    }
+    lcdCommand(posicao);
+}
+
+
+void main(void) {
+    unsigned long int cont = 0;
+    unsigned int tecla = 16;
+    lcdInit();
+    kpInit();
+    lcdCommand(0x80);
+    for (;;) {
+        cont++;
+        lcdPosition(1, 0);
+        lcdData((((cont / 360000) % 24) / 10) + 48);
+        lcdData((((cont / 360000) % 24) % 10) + 48);
+        lcdData(':');
+        lcdData((cont / 60000) % 6 + 48);
+        lcdData((cont / 6000) % 10 + 48);
+        lcdData(':');
+        lcdData((cont / 1000) % 6 + 48);
+        lcdData((cont / 100) % 10 + 48);
+        //ciclo de 10ms +-.
+        kpDebounce();
+        if (kpRead() != tecla) {
+            tecla = kpRead();
+            if (BitTst(tecla, 6)) cont += 360000;
+            if (BitTst(tecla, 7)) cont -= 360000;
+            if (BitTst(tecla, 4)) cont += 6000;
+            if (BitTst(tecla, 5)) cont -= 6000;
+            if (BitTst(tecla, 2)) cont += 100;
+            if (BitTst(tecla, 3)) cont -= 100;
+        }
+    }
+}
