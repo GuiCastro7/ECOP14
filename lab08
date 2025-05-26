@@ -1,0 +1,179 @@
+//Parte 1 e 2 da aula
+
+#include "config.h"
+#include "lcd.h"
+#include "pic18f4520.h"
+#include "adc.h"
+#include "pwm.h"
+#include "keypad.h"
+
+
+int valor;
+
+void PrintInt(int valor) {
+
+    lcdData(((valor / 1000) % 10) + 48);
+    lcdData(((valor / 100) % 10) + 48);
+    lcdData(((valor / 10) % 10) + 48);
+    lcdData((valor % 10) + 48);
+}
+
+int LeTemperatura(void) {
+    int temp;
+    temp = (adcRead() / 2);
+    lcdData(((temp / 1000) % 10) + 48);
+    lcdData(((temp / 100) % 10) + 48);
+    lcdData(((temp / 10) % 10) + 48);
+    lcdData((temp % 10) + 48);
+    return temp;
+
+
+}
+
+void main(void) {
+    unsigned long int temp = 0;
+    unsigned int tecla = 16;
+    lcdInit();
+    adcInit();
+    kpInit();
+    pwmInit();
+    pwmFrequency(1000);
+    for (;;) {
+        lcdCommand(0X80); //Na posição (0x80) 
+        PrintInt(33); // Aparece o print definido: 33
+        lcdCommand(0xC0); //Na posição de memoria (0xC0)
+        LeTemperatura(); // Aparece a temperatura lida
+        
+        kpDebounce();
+        if (kpRead() != tecla) {
+            tecla = kpRead();
+            if (BitTst(tecla, 0)){
+            pwmSet1(100);
+            }
+            if (BitTst(tecla, 2)){
+            pwmSet1(0);
+            }
+            if (BitTst(tecla, 1)){
+            pwmSet2(100);
+            }
+            if (BitTst(tecla, 3)){
+            pwmSet2(0);
+            }
+            
+        }
+   }
+}
+
+
+//Parte 3 
+  //controle.h 
+    
+#ifndef CONTROLE_H
+#define	CONTROLE_H
+
+void ConfiguraLimiteSuperior (unsigned char temp);
+void ConfiguraLimiteInferior (unsigned char temp);
+void AtualizarSistema (void); //Controla a temperatura
+
+#endif	/* CONTROLE_H */
+
+  //controle.c
+#include "config.h"
+#include "pic18f4520.h"
+#include "adc.h"
+#include "pwm.h"
+
+unsigned char inf, sup;
+
+void ConfiguraLimiteSuperior(unsigned char temp) {
+    sup = temp;
+}
+
+void ConfiguraLimiteInferior(unsigned char temp) {
+    inf = temp;
+}
+
+void AtualizarSistema(void) {
+    int Temperatura = (adcRead() / 2);
+
+    if (Temperatura < inf) {
+        pwmSet1(0);
+        pwmSet2(100);
+    } else if (Temperatura > sup) {
+        pwmSet1(100);
+        pwmSet2(0);
+    } else {
+        pwmSet1(0);
+        pwmSet2(0);
+    }
+}
+
+
+//Parte 4 
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+#include "adc.h"
+#include "pwm.h"
+#include "controle.h"
+
+void printInt(int temp) {
+    lcdData((temp / 100) % 10 + 48);
+    lcdData((temp / 10) % 10 + 48);
+    lcdData(temp % 10 + 48);
+
+}
+
+int LeTemperatura(void) {
+    int tempLida;
+    tempLida = (adcRead() / 2);
+    return tempLida;
+}
+
+void main(void) {
+    float i;
+    int temp;
+    unsigned char L = 20, H = 30;
+    int high = 100, low = 0;
+
+    
+    lcdInit();
+    adcInit();
+    pwmInit();
+    pwmFrequency(1000);
+   
+
+    for (;;) {
+        ConfiguraLimiteSuperior(H);
+        ConfiguraLimiteInferior(L);
+        AtualizarSistema();
+
+        temp = LeTemperatura();
+        lcdCommand(0x80);
+        lcdData('T');
+        lcdData(':');
+        printInt(temp);
+        lcdData('H');
+        lcdData(':');
+        printInt(H);
+        lcdData('L');
+        lcdData(':');
+        printInt(L);
+        lcdCommand(0xC0);
+        lcdData('C');
+        lcdData(':');
+        if (temp > H) printInt(high);
+        else if (temp < H) printInt(low);
+        lcdData('A');
+        lcdData(':');
+        if (temp > L) printInt(low);
+        else if (temp < L) printInt(high);
+        
+        
+        
+        }
+   
+    }
+
+
