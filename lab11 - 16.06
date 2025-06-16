@@ -29,8 +29,9 @@ void main(void) {
     BitSet(INTCON, 6); //habilita interrupção de periféricos
     BitSet(INTCON, 5); //int. timer0 (TMR0 Overflow)
     PORTD = 0;
-    ADCON0 |= 0x02;
+
     for (;;) {
+        ADCON0 |= 0x02;
         ssdUpdate();
         kpDebounce();
         tecla = kpRead();
