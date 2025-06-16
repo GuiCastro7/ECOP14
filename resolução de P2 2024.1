@@ -1,0 +1,84 @@
+//Questao 2;
+
+#include "pic18f4520.h"
+#include "pwm.h"
+#include "adc.h"
+#include "config.h"
+
+void main(void) {
+    pwmInit();
+    pwmFrequency(1000);
+    adcInit();
+    BitSet(TRISA, 3);
+    unsigned int ValorAD;
+
+    for (;;) {
+        ValorAD = adcRead();
+
+        if (BitTst(PORTA, 3)) {
+            pwmSet1(100);
+        } else {
+            switch (ValorAD) {
+                case 0:
+                    pwmSet1(0);
+                    break;
+                    
+                case 1..204:
+                    pwmSet1(20);
+                    break;
+
+                case 205..409:
+                    pwmSet1(40);
+                    break;
+
+                case 410..619:
+                    pwmSet1(60);
+                    break;
+
+                case 620..819:
+                    pwmSet1(80);
+                    break;
+
+                case 820..1023:
+                    pwmSet1(100);
+                    break;
+
+            }
+        }
+    }
+}
+
+//Questao 3
+#include "pic18f4520.h"
+#include "config.h"
+#include "lcd.h"
+#include "serial.h"
+
+
+void main(void) {
+lcdInit();
+serialInit();
+BitSet(PORTA,0);
+
+unsigned int cont = 0;
+
+    for(;;){
+        lcdCommand(0x80);
+        if(BitTst(PORTA,0)){
+            cont++;
+        }
+        lcdData(((cont/1000) %10)+ 48);
+        lcdData(((cont/100) %10)+ 48);
+        lcdData(((cont/10) %10)+ 48);
+        lcdData((cont % 10) + 48);
+        
+        serialSend((cont/1000) %10);
+        serialSend((cont/100) %10);
+        serialSend((cont/10) %10);
+        serialSend(cont % 10);
+        
+        if(cont == 10000){
+            cont = 0;
+        }
+    }
+}
