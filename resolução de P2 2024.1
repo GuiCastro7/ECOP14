@@ -82,3 +82,71 @@ unsigned int cont = 0;
         }
     }
 }
+
+
+//Questão 4
+
+#include "pic18f4520.h"
+#include "config.h"
+#include "ssd.h"
+
+char flag;
+
+void Int(void) __interrupt() {
+    if (BitTst(INTCON, 2)) {
+        timerReset(1000);
+        BitClr(INTCON, 2);
+        flag = 1;
+    }
+}
+
+int main(void) {
+    int conta, contb, ms, seg, min;
+
+    ssdInit();
+    BitSet(TRISA, 0);
+    BitSet(TRISA, 1);
+    BitSet(TRISA, 2);
+
+    for (;;) {
+        ssdUpdate();
+        if (BitTst(PORTA, 1)) {
+            conta++;
+            ssdDigit((conta), 0);
+        }
+        if (BitTst(PORTA, 2)) {
+            contb++;
+            ssdDigit((contb), 1);
+        }
+
+        if (flag) {
+            flag = 0;
+            ms++;
+            if (ms == 1000) {
+                seg++;
+                ms = 0;
+
+                if (seg == 60) {
+                    min++;
+                    seg = 0;
+                    ssdDigit((min % 10), 2);
+
+                    ssdDigit(((min / 10) % 10), 3);
+
+                }
+            }
+
+
+            if (bitTst(PORTA, 0)) {
+                ms = 0;
+                seg = 0;
+                min = 0;
+
+            }
+
+        }
+
+
+
+    }
+}
