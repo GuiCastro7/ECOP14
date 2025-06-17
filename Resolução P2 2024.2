@@ -1,0 +1,42 @@
+//Questao 1
+#ifndef VAZAO_H
+    #define VAZAO_H
+        
+    void VazaoInit(void); // Inicializa o sistema configurando as entradas e saídas
+    void VazaoInjeta(unsigned int pulsos); // Liga o motor e espera uma quantidade de pulsos e desliga o motor
+    void VazaoStatus(void); // Verifica se o sensor de óleo está ativado e liga/desliga o alarme
+    
+#endif
+    
+ //vazao.c
+    
+#include "config.h"
+#include "pic18f4520.h"
+#include "vazao.h"
+    
+   
+void VazaoInit(void){
+        
+    BitSet(TRISB, 0); //sensor sinal de 0 para 1 --> sistema girou 1 pulso.
+    BitSet(TRISB, 1); //sensor quantidade de oleo
+    BitClr(TRISB, 2); //motor que gira um dosador
+    BitClr(TRISA, 0); //alarme que é ativado quando há falta de oleo
+    
+    PORTA = 0X00;
+    PORTB = 0X00;
+    }
+
+void VazaoInjeta(unsigned int pulsos){
+    
+    BitSet(PORTB, 2);
+    
+    for(;;){
+        
+    if(BitTst(PORTB, 0)){
+        BitSet(PORTB, 2);
+        }
+    
+    }
+    
+    BitClr(PORTB, 2);
+   }
