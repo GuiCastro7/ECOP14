@@ -30,13 +30,18 @@ void VazaoInjeta(unsigned int pulsos){
     
     BitSet(PORTB, 2);
     
-    for(;;){
-        
-    if(BitTst(PORTB, 0)){
-        BitSet(PORTB, 2);
+    while(cont < pulso){
+        if(BitTst(PORTB, 0)) cont++;
         }
-    
-    }
     
     BitClr(PORTB, 2);
    }
+
+void Status(void){
+    if (BitTst(PORTB, 1)){
+        BitSet(PORTA, 0); 
+   }
+    else{
+        BitClr(PORTA, 0);
+    }
+  }
