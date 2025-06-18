@@ -64,8 +64,9 @@ unsigned int cont = 0;
 
     for(;;){
         lcdCommand(0x80);
-        if(BitTst(PORTA,0)){
+        if(BitTst(PORTA,0)){        
             cont++;
+            while(BitTst(PORTA, 0))
         }
         lcdData(((cont/1000) %10)+ 48);
         lcdData(((cont/100) %10)+ 48);
