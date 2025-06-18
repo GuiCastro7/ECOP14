@@ -1,4 +1,6 @@
 //Questao 1
+
+//vazao.h
 #ifndef VAZAO_H
     #define VAZAO_H
         
@@ -7,14 +9,13 @@
     void VazaoStatus(void); // Verifica se o sensor de óleo está ativado e liga/desliga o alarme
     
 #endif
+
     
  //vazao.c
     
-#include "config.h"
 #include "pic18f4520.h"
 #include "vazao.h"
-    
-   
+       
 void VazaoInit(void){
         
     BitSet(TRISB, 0); //sensor sinal de 0 para 1 --> sistema girou 1 pulso.
@@ -45,3 +46,42 @@ void Status(void){
         BitClr(PORTA, 0);
     }
   }
+  
+
+//Questao 2 
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "ldc.h"
+#include "serial.h"
+
+  int main(void) {
+    int cont;
+
+    serialInit();
+    lcdInit();
+    lcdCommand(0X80);
+
+    for (;;) {
+
+        if (bitTest(PORTB, 0)) {
+            cont = 0;
+        }
+
+        if (serialRead() == 'S') {
+            cont++;
+        }
+
+        if (serialRead() == 'Z') {
+            cont = 0;
+        }
+      lcdChar(cont);
+       lcdChar(cont);
+       lcdChar(cont);
+       lcdChar(cont);
+       lcdChar(cont);
+        lcdChar(cont);
+
+    }
+}
+
