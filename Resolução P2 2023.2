@@ -138,7 +138,7 @@ void Int(void) __interrupt() {
 }
 
 void main(void) {
-    unsigned int Valortemp;
+    unsigned int ValorTemp;
     TRISC = 0x00;
     PORTC = 0X00;
     ssdInit();
@@ -149,14 +149,14 @@ void main(void) {
 
     for (;;) {
         ValorTemp = adcRead() * 300 / 1023;
-        if (Valortemp > 200) {
+        if (ValorTemp > 200) {
             BitClr(PORTC, 5);  // Desliga aquecedor
-        } else if (Valortemp < 180) {
+        } else if (ValorTemp < 180) {
             BitSet(PORTC, 5); // Liga aquecedor
         }
         
         // Atualiza o display com 4 dígitos
-        ssdDigit((Valortemp / 1000) % 10, 3);
+        ssdDigit((ValorTemp / 1000) % 10, 3);
         ssdDigit((ValorTemp / 100) % 10, 2);
         ssdDigit((ValorTemp / 10) % 10, 1);
         ssdDigit(ValorTemp % 10, 0);
