@@ -1,0 +1,121 @@
+// P2 2023.2
+//Questao 1 
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "pwm.h"
+#include "adc.h"
+
+void main(void){
+    adcInit();
+    pwmInit();
+    pwmFrequency(1000);
+    int ValorAD;
+    unsigned int ValorNAD;   
+    unsigned char pwmCycle = 50;
+ 
+    pwmSet1(pwmCycle);
+    
+    for(;;){
+        ValorAD = adcRead(); // Lê tensão
+        ValorNAD = ValorAD - 220; // ValorNAD é o novo valor depois que o ValorAD diferença com 220
+        
+        if (ValorNAD > 0){ // Quando ValorNAD > 0 significa que ValorAD > 220, logo faz a diminuição do pwmCycle 
+            pwmCycle = pwmCycle - ValorNAD; 
+            }      
+        else if (ValorNAD < 0){
+            pwmCycle = pwmCycle + ValorNAD;
+            }
+        pwmSet1(pwmCycle)
+    }
+}
+
+//Questão 2
+
+//display.h
+
+#ifndef DISPLAY_H
+    #define DISPLAY_H
+    void displayInit(void);
+    void displayVelocidade(unsigned char vel);
+    void displayDirecao(unsigned char dir);
+    
+#endif
+    
+//display.c
+    
+#include "pic18f4520.h"
+#include "ssd.h"
+#include "display.h"
+    
+ 
+void displayInit(void){
+    
+    BitClr(TRISA, 0);
+    BitClr(TRISA, 1);  
+    BitClr(TRISA, 2);
+    BitClr(TRISA, 3);
+    PORTA = 0X00;
+    ssdInit();
+}
+
+void displayVelocidade(unsigned char vel){
+    
+    ssdDigit((vel % 10),0); //Unidade
+    ssdDigit(((vel/10) % 10),1); //Dezena
+    ssdDigit(((vel/100) % 10),2); //Centena
+}
+
+void displayDirecao(unsigned char dir){
+    
+    PORTA = 0X00;
+    
+    if(dir == 'N'){
+        BitSet(PORTA, 0);
+    }     
+    else if(dir == 'S'){
+        BitSet(PORTA, 1);
+    }   
+    else if(dir == 'E'){
+        BitSet(PORTA, 2);
+    }   
+    else if(dir == 'W'){
+       BitSet(PORTA, 3); 
+    }
+}
+    
+//Questao 3
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+#include "timer.h"
+
+void main(void){
+    unsigned int ms;
+    lcdInit();
+    timerInit();
+    TRISA = 0b00000111;
+    PORTA = 0X00;
+    
+    for(;;){
+        ms = 0;
+        lcdCommand(0x80);
+        while (BitTst(PORTA, 0)); // Espera botão  ser pressionado
+        while (BitTst(PORTA, 1)) // Aguarda sensor de início
+        timerReset(); // Zera o timer
+        while (!BitTst(PORTA, 2)){  // Aguarda sensor de parada 
+            timerwait();
+            ms++;
+            
+        }   
+        lcdCommand(0x80);
+        lcdData((ms/100)%10+48);
+        lcdData((ms/10)%10+48);
+        lcdData((ms/1)%10+48);
+        
+
+    }
+}
+
+//Questão 4
