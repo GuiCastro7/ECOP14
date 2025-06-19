@@ -1,4 +1,69 @@
-//Questao 2;
+//P2 2024.1
+//Questão 1
+
+//painel.h
+#ifned PAINEL_H
+    #define PAINEL_H
+    void painelnit(void);
+    void painielAlarme(int status);
+    void painelNivel(int status);
+
+#endif
+
+//painel.c
+
+
+#include "pic18f4520.h"
+#include "painel.h"
+
+void painelInit(void){
+    TRISA = 0x00;
+    PORTA = 0x00;
+}
+
+void painelAlarme(int status){
+    if(status > 100){
+        BitSet(PORTA, 4);
+    }
+    else{
+        BitClr(PORTA, 4);
+    }
+
+void painelNivel(int status){
+    if(status = 0){
+        BitClr(PORTA, 0);
+        BitClr(PORTA, 1);
+        BitClr(PORTA, 2);
+        BitClr(PORTA, 3);
+    }
+    if(status <= 25){
+        BitSet(PORTA, 0);
+        BitClr(PORTA, 1);
+        BitClr(PORTA, 2);
+        BitClr(PORTA, 3);
+    }
+    if(status <= 50){
+        BitSet(PORTA, 1);
+        BitClr(PORTA, 0);
+        BitClr(PORTA, 2);
+        BitClr(PORTA, 3);
+    }
+    if(status <= 75){
+        BitSet(PORTA, 2);
+        BitClr(PORTA, 0);
+        BitClr(PORTA, 1);
+        BitClr(PORTA, 3);
+    }
+    if(status <= 100){
+        BitSet(PORTA, 3);
+        BitClr(PORTA, 0);
+        BitClr(PORTA, 1);
+        BitClr(PORTA, 2);
+    }
+}
+
+
+//Questao 2
 
 #include "pic18f4520.h"
 #include "pwm.h"
@@ -22,6 +87,7 @@ void main(void) {
           }
     }
 }
+
 
 //Questao 3
 #include "pic18f4520.h"
