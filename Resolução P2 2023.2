@@ -119,3 +119,51 @@ void main(void){
 }
 
 //Questão 4
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "adc.h"
+#include "timer.h"
+#include "ssd.h"
+char flag;
+
+//Esta interrupção é chamada a cada 1ms.
+
+void Int(void) __interrupt() {
+    if (BitTst(INTCON, 2)) { //Verifica se ocorreu overflow de TMR0
+        timerReset(1000); //Ajusta o contador do TMR0
+        BitClr(INTCON, 2); //Desliga o Flag de everflow do TMR0
+        flag = 1;
+    }
+}
+
+void main(void) {
+    unsigned int Valortemp;
+    TRISC = 0x00;
+    PORTC = 0X00;
+    ssdInit();
+    adcInit();
+    timerInit();
+    InitInterrupt();
+
+
+    for (;;) {
+        ValorTemp = adcRead() * 300 / 1023;
+        if (Valortemp > 200) {
+            BitClr(PORTC, 5);  // Desliga aquecedor
+        } else if (Valortemp < 180) {
+            BitSet(PORTC, 5); // Liga aquecedor
+        }
+        
+        // Atualiza o display com 4 dígitos
+        ssdDigit((Valortemp / 1000) % 10, 3);
+        ssdDigit((ValorTemp / 100) % 10, 2);
+        ssdDigit((ValorTemp / 10) % 10, 1);
+        ssdDigit(ValorTemp % 10, 0);
+        
+        while (!flag);
+        flag = 0;
+        
+        ssdUpdate();
+    }
+}
