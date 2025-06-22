@@ -139,8 +139,8 @@ void Int(void) __interrupt() {
 
 void main(void) {
     unsigned int ValorTemp;
-    TRISC = 0x00;
-    PORTC = 0X00;
+    BitClr(TRISC, 5);
+    BitClr(PORTC, 5);
     ssdInit();
     adcInit();
     timerInit();
