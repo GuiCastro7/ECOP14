@@ -1,0 +1,124 @@
+// P2 2023.1
+// Questao 1
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "serial.h"
+#include "pwm.h"
+
+void main(void){
+    
+    unsigned char maquina;
+    pwmInit();
+    pwmFrequency(1000);
+    serialInit();
+       
+    for(;;){
+        maquina = serialRead();
+    
+        if(maquina == 'A'){ //M1
+            pwmSet1(10);
+            serialSend("OK\n");
+        }
+        else if(maquina == 'B'){ //M2
+            pwmSet1(50);
+            serialSend("OK\n");
+        }
+        else if(maquina == 'C'){ //M3
+            pwmSet1(100);
+            serialSend("OK\n");
+        }
+    }
+}
+
+
+//Questao 2
+
+//nivel.h 
+#ifndef NIVEL_H
+    #define NIVEL_H
+    void mostradorInit(void);
+    void mostradorAjustaValor(void);
+    unsigned char mostradorNivel(void);
+    
+#endif 
+
+//nivel.c
+    
+#include "pic18f4520.h"
+#include "ssd.h"
+
+void mostradorInit(void){
+    ssdInit();
+    BitSet(TRISB, 0); //entrada
+    BitSet(TRISB, 1); //entrada
+    BitSet(TRISB, 2); //entrada
+    BitSet(TRISB, 3); //entrada      
+    PORTB = 0X00; 
+}    
+
+void mostradorAjustaValor(void){
+    unsigned char valor = mostradorNivel();
+
+    ssdDigit(valor % 10, 0);              // Unidade
+    ssdDigit((valor / 10) % 10, 1);       // Dezena
+    ssdDigit((valor / 100) %10, 2);       //Centena
+}
+    
+unsigned char mostradorNivel(void){
+    unsigned char nivel = PORTB & 0x0F;;
+    
+    if (nivel == 0x00) {
+        return 0;
+    }
+    else if (nivel == 0x01) {
+        return 25;
+    }
+    else if (nivel == 0x03) {
+        return 50;
+    }
+    else if (nivel == 0x07) {
+        return 75;
+    }
+    else if (nivel == 0x0F) {
+        return 100;
+    }
+    else {
+        return 0; // caso indefinido ou erro
+    }
+}
+
+
+//Questão 3
+
+#include "config.h"
+#include "pic18f4520.h"
+#include "lcd.h"
+
+void main(void){
+    BitClr(TRISA, 0);
+    BitSet(TRISA, 1); //sensor (entrada)
+    BitSet(TRISA, 4); //A
+    BitSet(TRISA, 5); //B
+    BitSet(TRISA, 6); //C
+    BitSet(TRISA, 7); //D
+    PORTA = 0X00;
+    
+    lcdInit();
+    
+    for(;;){
+        lcdCommand(0x80);
+        if(BitTst(PORTA, 4) && BitTst(PORTA, 5)){
+            if (!BitTst(PORTA, 6) && BitTst(PORTA, 7)) { //se C(bit 6) for 0 e D(bit 7) for 1 então a placa é LIBERADA
+            BitSet(PORTA, 0);
+            } 
+            else { //FALHA
+            BitClr(PORTA, 0);
+            }
+            
+            while (!BitTst(PORTA, 1));  //Enquanto o sensor estiver em nível lógico 0, o programa fica parado nesse ponto. Quando o sensor for 1, ele continua a execução normalmente a partir da próxima linha.
+        }
+    }
+    
+    
+}
