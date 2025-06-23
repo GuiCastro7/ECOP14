@@ -39,7 +39,7 @@ void VazaoInjeta(unsigned int pulsos){
    }
 
 void Status(void){
-    if (BitTst(PORTB, 1)){
+    if (!BitTst(PORTB, 1)){
         BitSet(PORTA, 0); 
    }
     else{
