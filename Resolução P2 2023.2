@@ -12,21 +12,21 @@ void main(void){
     pwmFrequency(1000);
     int ValorAD;
     unsigned int ValorNAD;   
-    unsigned char pwmCycle = 50;
+    unsigned char pwm = 50;
  
-    pwmSet1(pwmCycle);
+
     
     for(;;){
         ValorAD = adcRead(); // Lê tensão
         ValorNAD = ValorAD - 220; // ValorNAD é o novo valor depois que o ValorAD diferença com 220
         
-        if (ValorNAD > 0){ // Quando ValorNAD > 0 significa que ValorAD > 220, logo faz a diminuição do pwmCycle 
-            pwmCycle = pwmCycle - ValorNAD; 
+        if (ValorNAD > 0){ // Quando ValorNAD > 0 significa que ValorAD > 220, logo faz a diminuição do pwm
+            pwm--;
             }      
-        else if (ValorNAD < 0){
-            pwmCycle = pwmCycle + ValorNAD;
+        else if (ValorNAD < 0){  // Quando ValorNAD < 0 significa que ValorAD < 220, logo faz a aumento do pwm
+            pwm++;
             }
-        pwmSet1(pwmCycle)
+        pwmSet1(pwm)
     }
 }
 
@@ -51,10 +51,10 @@ void main(void){
  
 void displayInit(void){
     
-    BitClr(TRISA, 0);
-    BitClr(TRISA, 1);  
-    BitClr(TRISA, 2);
-    BitClr(TRISA, 3);
+    BitClr(TRISA, 0); //entrada
+    BitClr(TRISA, 1);  //entrada  
+    BitClr(TRISA, 2);  //entrada
+    BitClr(TRISA, 3);  //entrada
     PORTA = 0X00;
     ssdInit();
 }
@@ -95,7 +95,7 @@ void main(void){
     unsigned int ms;
     lcdInit();
     timerInit();
-    TRISA = 0b00000111;
+    TRISA = 0b00000111; //Entradas bit 0,1 e 2
     PORTA = 0X00;
     
     for(;;){
@@ -106,15 +106,12 @@ void main(void){
         timerReset(); // Zera o timer
         while (!BitTst(PORTA, 2)){  // Aguarda sensor de parada 
             timerwait();
-            ms++;
-            
+            ms++;  
         }   
         lcdCommand(0x80);
         lcdData((ms/100)%10+48);
         lcdData((ms/10)%10+48);
         lcdData((ms/1)%10+48);
-        
-
     }
 }
 
@@ -144,7 +141,6 @@ void main(void) {
     ssdInit();
     adcInit();
     timerInit();
-    InitInterrupt();
 
 
     for (;;) {
@@ -156,10 +152,10 @@ void main(void) {
         }
         
         // Atualiza o display com 4 dígitos
-        ssdDigit((ValorTemp / 1000) % 10, 3);
-        ssdDigit((ValorTemp / 100) % 10, 2);
-        ssdDigit((ValorTemp / 10) % 10, 1);
-        ssdDigit(ValorTemp % 10, 0);
+        ssdDigit((ValorTemp / 1000) % 10, 3); //Milhares
+        ssdDigit((ValorTemp / 100) % 10, 2); //Centenas
+        ssdDigit((ValorTemp / 10) % 10, 1); //Dezenas
+        ssdDigit(ValorTemp % 10, 0); //Unidades
         
         while (!flag);
         flag = 0;
