@@ -1,0 +1,173 @@
+#include "config.h"
+#include "pic18f4520.h"
+#include "ssd.h"
+#include "timer.h"
+#include "serial.h"
+#include "adc.h"
+#include "keypad.h"
+#include "pwm.h"
+#include "lcd.h"
+
+void LeTeclado(void); //Teclado da placa
+void Serial(void); //Le o teclado do pc
+void MostraDisplay(void);
+
+
+void main(void) {
+    char slot;
+    ssdInit();
+    timerInit();
+    adcInit();
+    kpInit();
+    serialInit();
+    pwmInit();
+    pwmFrequency(1000);
+    lcdInit();
+            
+    //inicializações
+    for (;;) {
+        timerReset(5000);
+        ssdUpdate();
+        switch (slot) {
+            case 0:
+                LeTeclado();
+                slot = 1;
+                break;
+            case 1:
+                Serial();
+                slot = 2;
+                break;
+            case 2:
+                kpDebounce();
+                slot = 3;
+                break;
+            case 3:
+                MostraDisplay();
+                slot = 0;
+                break;
+            default:
+                slot = 0;
+                break;
+        }
+        timerWait();
+        
+        
+        
+        
+    }
+}
+
+void LeTeclado(void){
+    char tecla, i;
+    tecla = kpRead();
+    
+    if (BitTst(tecla, 0)){
+        lcdCommand(0x80);
+        lcdData('G');
+        lcdData('u');
+        lcdData('i');
+        lcdData('l');
+        lcdData('h');
+        lcdData('e');
+        lcdData('r');
+        lcdData('m');
+        lcdData('e');
+    }
+    
+    if (BitTst(tecla, 1)){
+        lcdCommand(0xC0);
+        lcdData('2');
+        lcdData('0');
+        lcdData('2');
+        lcdData('4');
+        lcdData('0');
+        lcdData('1');
+        lcdData('0');
+        lcdData('6');
+        lcdData('0');
+        lcdData('5'); 
+    }
+    if (BitTst(tecla , 2)){
+        pwmSet1(100);
+    }
+    if (BitTst(tecla, 3)) {
+        pwmSet1(0);
+    }
+    if (BitTst(tecla, 4)){
+        lcdCommand(0x80);
+        for (i = 0; i <= 15; i++){
+            lcdData(' ');
+        }
+        lcdCommand(0XC0);
+        for (i = 0; i <= 15; i++){
+            lcdData(' ');
+        }
+    
+    } 
+}
+
+void Serial(void){
+    char valor;
+    int i, temp;
+    
+    valor = serialRead();
+    if(valor == 'A') {
+        lcdCommand(0x80);
+        lcdData('G');
+        lcdData('u');
+        lcdData('i');
+        lcdData('l');
+        lcdData('h');
+        lcdData('e');
+        lcdData('r');
+        lcdData('m');
+        lcdData('e');
+    }
+    if(valor == 'B'){
+        lcdCommand(0xC0);
+        lcdData('2');
+        lcdData('0');
+        lcdData('2');
+        lcdData('4');
+        lcdData('0');
+        lcdData('1');
+        lcdData('0');
+        lcdData('6');
+        lcdData('0');
+        lcdData('5'); 
+    }
+    if(valor == 'C'){
+        pwmSet1(100);
+    }
+    if(valor == 'D'){
+        pwmSet1(0);
+    }
+    if(valor == 'O'){
+        lcdCommand(0x80);
+        for (i = 0; i <= 15; i++){
+            lcdData(' ');
+        }
+        lcdCommand(0XC0);
+        for (i = 0; i <= 15; i++){
+            lcdData(' ');
+        }
+    } 
+    if(valor == 'T'){
+        serialSend('T');
+        serialSend(':');
+        serialSend(((temp/ 10) % 10) + 48);
+        serialSend((temp % 10) + 48);
+        serialSend(13);
+    }
+}
+
+void MostraDisplay(void){
+    int temp;
+    
+    temp = adcRead()/2;
+    ssdDigit((temp/1000), 3);
+    ssdDigit((temp/100)% 10, 2);
+    ssdDigit((temp/10)% 10, 1);
+    ssdDigit(temp%10, 0);
+}
+
