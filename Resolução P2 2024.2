@@ -28,7 +28,7 @@ void VazaoInit(void){
     }
 
 void VazaoInjeta(unsigned int pulsos){
-    unsigned char cont;
+    unsigned char cont = 0;
     BitSet(PORTB, 2);
     
     while(cont < pulso){
@@ -55,13 +55,15 @@ void Status(void){
 #include "ldc.h"
 #include "serial.h"
 
-  int main(void) {
-    int cont;
+void main(void) {
+    unsigned long cont = 0;
 
     serialInit();
     lcdInit();
     lcdCommand(0X80);
 
+    BitSet(TRISB, 0);
+    PORTB = 0X00;
     for (;;) {
 
         if (bitTest(PORTB, 0)) {
