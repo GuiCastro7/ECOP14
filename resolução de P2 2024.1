@@ -2,7 +2,7 @@
 //Questão 1
 
 //painel.h
-#ifned PAINEL_H
+#ifndef PAINEL_H
     #define PAINEL_H
     void painelnit(void);
     void painielAlarme(int status);
@@ -30,34 +30,22 @@ void painelAlarme(int status){
     }
 
 void painelNivel(int status){
-    if(status = 0){
+    if(status == 0){
         BitClr(PORTA, 0);
         BitClr(PORTA, 1);
         BitClr(PORTA, 2);
         BitClr(PORTA, 3);
     }
-    if(status <= 25 && status > 0){
+    if(status >= 25){
         BitSet(PORTA, 0);
-        BitClr(PORTA, 1);
-        BitClr(PORTA, 2);
-        BitClr(PORTA, 3);
     }
-    if(status <= 50 &&  status > 25)){
-        BitClr(PORTA, 0);
+    if(status >= 50 )){
         BitSet(PORTA, 1);
-        BitClr(PORTA, 2);
-        BitClr(PORTA, 3);
     }
-    if(status <= 75 &&  status > 50){
-        BitClr(PORTA, 0);
-        BitClr(PORTA, 1);
+    if(status >= 75 ){
         BitSet(PORTA, 2);
-        BitClr(PORTA, 3);
     }
-    if(status <= 100 &&  status > 75){
-        BitClr(PORTA, 0);
-        BitClr(PORTA, 1);
-        BitClr(PORTA, 2);
+    if(status >= 100){
         BitSet(PORTA, 3);
     }
 }
@@ -99,7 +87,8 @@ void main(void) {
 void main(void) {
 lcdInit();
 serialInit();
-BitSet(PORTA,0);
+BitSet(TRISA,0);
+PORTA = 0X00;
 
 unsigned int cont = 0;
 
@@ -109,17 +98,17 @@ unsigned int cont = 0;
             cont++;
             while(BitTst(PORTA, 0));
         }
-        lcdData(((cont/1000) %10)+ 48);
-        lcdData(((cont/100) %10)+ 48);
-        lcdData(((cont/10) %10)+ 48);
-        lcdData((cont % 10) + 48);
+        lcdData(((cont/1000) %10)+ 48); //Milhares
+        lcdData(((cont/100) %10)+ 48); //Centenas
+        lcdData(((cont/10) %10)+ 48); //Dezenas
+        lcdData((cont % 10) + 48); //Unidades
         
         serialSend((cont/1000) %10);
         serialSend((cont/100) %10);
         serialSend((cont/10) %10);
         serialSend(cont % 10);
         
-        if(cont == 10000){
+        if(cont == 10000){ //Capacidade máxima, ele zera o contador.
             cont = 0;
         }
     }
@@ -131,6 +120,7 @@ unsigned int cont = 0;
 #include "pic18f4520.h"
 #include "config.h"
 #include "ssd.h"
+#include "timer.h"
 
 char flag;
 
@@ -143,8 +133,9 @@ void Int(void) __interrupt() {
 }
 
 void main(void) {
-    int conta, contb, ms, seg, min;
+    unsigned int conta, contb, ms, seg, min;
 
+    timerInit();
     ssdInit();
     BitSet(TRISA, 0);
     BitSet(TRISA, 1);
