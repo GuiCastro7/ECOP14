@@ -36,29 +36,29 @@ void painelNivel(int status){
         BitClr(PORTA, 2);
         BitClr(PORTA, 3);
     }
-    if(status <= 25){
+    if(status <= 25 && status > 0){
         BitSet(PORTA, 0);
         BitClr(PORTA, 1);
         BitClr(PORTA, 2);
         BitClr(PORTA, 3);
     }
-    if(status <= 50){
+    if(status <= 50 &&  status > 25)){
+        BitClr(PORTA, 0);
         BitSet(PORTA, 1);
-        BitClr(PORTA, 0);
         BitClr(PORTA, 2);
         BitClr(PORTA, 3);
     }
-    if(status <= 75){
+    if(status <= 75 &&  status > 50){
+        BitClr(PORTA, 0);
+        BitClr(PORTA, 1);
         BitSet(PORTA, 2);
-        BitClr(PORTA, 0);
-        BitClr(PORTA, 1);
         BitClr(PORTA, 3);
     }
-    if(status <= 100){
-        BitSet(PORTA, 3);
+    if(status <= 100 &&  status > 75){
         BitClr(PORTA, 0);
         BitClr(PORTA, 1);
         BitClr(PORTA, 2);
+        BitSet(PORTA, 3);
     }
 }
 
